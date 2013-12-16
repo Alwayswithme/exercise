@@ -22,7 +22,5 @@ public class FindTwoUniq {
 				uniq2 ^= arr[i];
 		}
 		System.out.printf("The two unique number is %d and %d", uniq1, uniq2);
-				
-		
 	}
 }
