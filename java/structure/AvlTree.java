@@ -31,12 +31,11 @@ public class AvlTree<T extends Comparable<? super T>> {
     }
 
     /**
-     * Insert into the tree; duplicates are ignored.
-     * 
-     * @param x the item to insert
+     * Test if the tree is logically empty.
+     * @return true if empty, false otherwise.
      */
-    public void insert(T x) {
-        root = insert(x, root);
+    public boolean isEmpty() {
+        return root == null;
     }
 
     // Assume t is either balanced or within one of being balanced
@@ -68,6 +67,51 @@ public class AvlTree<T extends Comparable<? super T>> {
      */
     private int height(AvlNode<T> t) {
         return t == null ? -1 : t.height;
+    }
+
+    /**
+     * Remove from the tree. Nothing is done if x is not found.
+     * 
+     * @param x the item to remove.
+     */
+    public void remove(T x) {
+        root = remove(x, root);
+    }
+
+    /**
+     * Internal method to remove from a subtree.
+     * 
+     * @param x the item to remove.
+     * @param t the node that roots the subtrees.
+     * @return the new root of the subtree.
+     */
+    private AvlNode<T> remove(T x, AvlNode<T> t) {
+        if (t == null) {
+            return t;
+        }
+
+        int compareResult = x.compareTo(t.element);
+
+        if (compareResult < 0) {
+            t.left = remove(x, t.left);
+        } else if (compareResult > 0) {
+            t.right = remove(x, t.right);
+        } else if (t.left != null && t.right != null) {
+            t.element = findMin(t.right).element;
+            t.right = remove(t.element, t.right);
+        } else {
+            t = (t.left != null) ? t.left : t.right;
+        }
+        return balance(t);
+    }
+
+    /**
+     * Insert into the tree; duplicates are ignored.
+     * 
+     * @param x the item to insert
+     */
+    public void insert(T x) {
+        root = insert(x, root);
     }
 
     /**
@@ -122,10 +166,101 @@ public class AvlTree<T extends Comparable<? super T>> {
     }
 
     /**
+     * Find the smallest item in the tree.
+     * 
+     * @return smallest item or null if empty.
+     */
+    public T findMin() {
+        if (isEmpty()) {
+            throw new UnderflowException();
+        }
+        return findMin(root).element;
+    }
+
+    /**
+     * Internal method to find the smallest item in a subtree.
+     * 
+     * @param t the node that roots the tree.
+     * @return node containing the smallest item.
+     */
+    private AvlNode<T> findMin(AvlNode<T> t) {
+        if (t == null) {
+            return t;
+        }
+        while (t.left != null) {
+            t = t.left;
+        }
+        return t;
+    }
+
+    /**
+     * Find the largest item in the tree.
+     * 
+     * @return largest item or null if empty.
+     */
+    public T findMax() {
+        if (isEmpty()) {
+            throw new UnderflowException();
+        }
+
+        return findMax(root).element;
+    }
+
+    /**
+     * Internal method to find the largest item in a subtree.
+     * 
+     * @param t the node that roots the tree.
+     * @return node containing the largest item.
+     */
+    private AvlNode<T> findMax(AvlNode<T> t) {
+        if (t == null) {
+            return t;
+        }
+
+        while (t.right != null) {
+            t = t.right;
+        }
+        return t;
+    }
+
+    /**
+     * Find an item in the tree.
+     * 
+     * @param x the item to search for.
+     * @return ture if x is found.
+     */
+    public boolean contains(T x) {
+        return contains(x, root);
+    }
+
+    /**
+     * Internal method to find an item in a subtree.
+     * 
+     * @param x is item to search for.
+     * @param t is the node that roots the tree.
+     * @return true if x is found in subtree.
+     */
+    private boolean contains(T x, AvlNode<T> t) {
+        while (t != null) {
+            int compareResult = x.compareTo(t.element);
+
+            if (compareResult < 0) {
+                t = t.left;
+            } else if (compareResult > 0) {
+                t = t.right;
+            } else {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Double rotate binary tree node: first right child
      * with its left child; then node ori with new right child.
      * For AVL trees, this is a double rotation for right-left case.
      * Update heights, then return new root.
+     * 
      * @param ori
      * @return new root of subtree
      */
@@ -139,6 +274,7 @@ public class AvlTree<T extends Comparable<? super T>> {
      * with its right child; then node ori with new left child.
      * For AVL trees, this is a double rotation for left-right case.
      * Update heights, then return new root.
+     * 
      * @param ori
      * @return new root of subtree
      */
@@ -149,11 +285,9 @@ public class AvlTree<T extends Comparable<? super T>> {
 
     /**
      * Internal methods to calculate a AvlNode's height after update.
-     * updateHeight
      * 
      * @param node the AvlNode have been rotated.
-     * @return
-     *         int heights of the node.
+     * @return int heights of the node.
      */
     private int updateHeight(AvlNode<T> node) {
         return Math.max(height(node.left), height(node.right)) + 1;
