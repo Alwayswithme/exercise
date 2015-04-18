@@ -39,5 +39,11 @@ validatePasswordByRule = function(min, max, ruleId, pswd) {
     }
   }
 
+  var hasRepeat = "([A-Za-z0-9!\"#$%&'()*+,\\\-./:;<=>?@[\\\\\\]^_`{|}~])\\1{count,}";
+  var reg = new RegExp(hasRepeat.replace(/count/, 3));
+  if (reg.test(pswd)) {
+    return {result: false, msg: "密码有太多重复字符"};
+  }
+
   return {result: true, msg: "密码符合规则"};
 };
