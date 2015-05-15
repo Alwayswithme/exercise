@@ -23,12 +23,12 @@ validatePasswordByRule = function(min, max, ruleId, pswd) {
   var hasLower = {reg: REGEXP_LOWER, errorMsg: "密码须包含小写字母"};
   var hasPunct = {reg: REGEXP_PUNCT, errorMsg: "密码须包含标点符号"};
 
-  var rule0 = [];
-  var rule1 = [hasDigit];
-  var rule2 = [hasUpper, hasLower];
-  var rule3 = [hasDigit, hasUpper, hasLower];
-  var rule4 = [hasDigit, hasUpper, hasLower, hasPunct];
-  var rules = [rule0, rule1, rule2, rule3, rule4];
+  var rules = [];
+  rules[0] = [];
+  rules[1] = [hasDigit];
+  rules[2] = [hasUpper, hasLower];
+  rules[3] = [hasDigit, hasUpper, hasLower];
+  rules[4] = [hasDigit, hasUpper, hasLower, hasPunct];
 
   var rule = rules[ruleId];
 
