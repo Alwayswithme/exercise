@@ -3,6 +3,7 @@
 import re
 import json
 import urllib.request
+import subprocess
 
 file = "/home/ye/Desktop/ss.json"
 url = "http://www.ishadowsocks.com/"
@@ -25,3 +26,7 @@ try:
         json.dump(data, f)
 except IOError:
     pass
+
+args = ['sslocal', '-c', file]
+cmd = "sslocal -c " + file
+subprocess.run(args)
